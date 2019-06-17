@@ -10,16 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_17_165439) do
+ActiveRecord::Schema.define(version: 2019_06_17_190901) do
 
   create_table "centers", force: :cascade do |t|
     t.string "center"
-    t.string "type"
+    t.string "center_type"
   end
 
   create_table "pokemons", force: :cascade do |t|
     t.string "name"
-    t.string "type"
+    t.string "pokemon_type"
     t.string "location_area"
     t.integer "hp"
     t.integer "user_id"
