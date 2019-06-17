@@ -1,3 +1,4 @@
-class Reviews < ActiveRecord::Base
-
+class Review < ActiveRecord::Base
+    belongs_to :user
+    belongs_to :center
 end
