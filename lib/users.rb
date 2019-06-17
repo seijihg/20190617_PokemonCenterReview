@@ -22,5 +22,7 @@ def random_pokemon
 end
 
 class Users < ActiveRecord::Base
-
+    has_many :reviews
+    has_many :centers, through: :reviews
+    has_one :pokemons
 end
