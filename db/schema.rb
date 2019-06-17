@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_17_121339) do
+ActiveRecord::Schema.define(version: 2019_06_17_165439) do
 
   create_table "centers", force: :cascade do |t|
     t.string "center"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 2019_06_17_121339) do
     t.string "type"
     t.string "location_area"
     t.integer "hp"
+    t.integer "user_id"
   end
 
   create_table "reviews", force: :cascade do |t|

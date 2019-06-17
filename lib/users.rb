@@ -21,8 +21,8 @@ def random_pokemon
     pokemon = pokemons.results.sample
 end
 
-class Users < ActiveRecord::Base
+class User < ActiveRecord::Base
     has_many :reviews
     has_many :centers, through: :reviews
-    has_one :pokemons
+    has_one :pokemon
 end

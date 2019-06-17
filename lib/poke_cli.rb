@@ -7,4 +7,6 @@ def your_data
     poke = random_pokemon.name
     puts "Puff!! ... open a pokeball! Your Pokemon is #{poke.capitalize}"
     puts "Now #{name} and #{poke.capitalize} start the journey together"
+
+    
 end

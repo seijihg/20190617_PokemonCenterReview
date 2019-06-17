@@ -1,4 +1,4 @@
-class Reviews < ActiveRecord::Base
-    belongs_to :artist
-    belongs_to :genre
+class Review < ActiveRecord::Base
+    belongs_to :user
+    belongs_to :center
 end
