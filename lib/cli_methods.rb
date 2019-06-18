@@ -19,10 +19,18 @@ end
 def random_pokemon
     pokemons = PokeApi.get(:pokemon)
     pokemon = pokemons.results.sample
+    Pokemon.create(name: pokemon.name, pokemon_type: find_out_type(pokemon.name), hp: random_hp)
+end
+
+def random_three_pokemon
+    pokemons = PokeApi.get(:pokemon)
+    pokemon = pokemons.results.sample(3)
+    binding.pry
+    Pokemon.create(name: pokemon.name, pokemon_type: find_out_type(pokemon.name), hp: random_hp)
 end
 
 def find_out_type(pokemon_name)
-    PokeApi.get(pokemon: pokemon_name).types.first.type.name.capitalize
+    PokeApi.get(pokemon: pokemon_name).types.first.type.name
 end
 
 def random_hp
@@ -39,4 +47,15 @@ end
 
 def random_type_for_poke_center
     PokeApi.get(:type).results.map {|type| type.name}.sample
+end
+
+def center_with_reviews
+    Center.all.select {|center| !center.reviews.empty?}
+end
+
+def center_reviews
+    center_revs = Review.all.select {|review| review.center == selected_center}
+    if center_revs.empty?
+        puts "There are no reviews yet for this Center"
+    end
 end
