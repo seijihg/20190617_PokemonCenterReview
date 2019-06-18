@@ -25,7 +25,6 @@ end
 def random_three_pokemon
     pokemons = PokeApi.get(:pokemon)
     pokemon = pokemons.results.sample(3)
-    binding.pry
     Pokemon.create(name: pokemon.name, pokemon_type: find_out_type(pokemon.name), hp: random_hp)
 end
 

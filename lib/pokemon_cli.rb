@@ -73,7 +73,7 @@ def add_pokemon_to_user
     add = $prompt.select("Add #{selected_pokemon.name.capitalize} to #{$cliuser.name}?", ['Yes', 'No'])
         if add == 'Yes'
             $cliuser.pokemon = selected_pokemon
-            $prompt.ok("Congratulations, here’s your #{selected_pokemon.name.capitalize}")
+            $prompt.ok("Congratulations, here’s your #{selected_pokemon.name.capitalize}, #{selected_pokemon.hp} HP.")
             main_menu
         else add == 'No'
             add_pokemon_to_user
@@ -98,6 +98,7 @@ end
 
 def visit_center
     Pokemon.losing_hp
+    $cliuser.check_hp
     center_list = (Center.all.map {|pc| pc.center})
     pokecenter = $prompt.select("Which Pokemon Center do you want to visit?", center_list, per_page: 20)
     $selected_center = Center.all.find_by(center: pokecenter)
@@ -105,20 +106,23 @@ def visit_center
 end
 
 def see_all_reviews
-
-    Review.all.map {|rev| rev.show_review}
-    $prompt.select('Back')
+    Review.all.map {|rev| rev.show_review}.each {|r| puts r}
+    $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
+    Pokemon.losing_hp
+    $cliuser.check_hp
     main_menu
 end
 
 def pokecenter_rank
-    center_with_reviews.sort_by {|center| center.average_rating}
-    $prompt.select('Back')
+    rank = Center.all.sort_by {|center| -center.average_ratings}
+    rank.map {|center| center.show_ranking}.each {|r| puts r}
+    $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
+    Pokemon.losing_hp
+    $cliuser.check_hp
     main_menu
 end
 
 def pokecenter_menu
-    Pokemon.losing_hp
     $cliuser.check_hp
     pc_menu = $prompt.select("Welcome to the #{$selected_center.center} Pokemon Center Menu", ['Heal Pokemon', 'See Center Reviews', 'Edit Reviews', 'Delete Review', 'Leave Center'])
         if pc_menu == 'Heal Pokemon'
@@ -126,9 +130,7 @@ def pokecenter_menu
             $cliuser.heal_pokemon($selected_center.id)
             user_hash = collect_for_review
             $cliuser.add_review(content: user_hash[:content], rating: user_hash[:rating].to_i, center_id: $selected_center.id)
-            
             pokecenter_menu
-            binding.pry
         elsif pc_menu == 'See Center Reviews'
             center_reviews
             sleep 1
@@ -139,6 +141,7 @@ def pokecenter_menu
             delete_review
             sleep 1
         else pc_menu == 'Leave Center'
+            Pokemon.losing_hp
             main_menu
         end
 end
@@ -167,8 +170,10 @@ def edit_review
             $selected_review.rating = gets.chomp
             $selected_review.save
             $prompt.ok("Done.")
+            Pokemon.losing_hp
             pokecenter_menu
         else edit == "No"
+            Pokemon.losing_hp
             pokecenter_menu
         end
 end
@@ -180,8 +185,10 @@ def delete_review
             Review.all.where(id: $selected_review.id).destroy_all
             $selected_review = ''
             $prompt.ok("Done.")
+            Pokemon.losing_hp
             pokecenter_menu
         else delete == "No"
+            Pokemon.losing_hp
             pokecenter_menu
         end
 end

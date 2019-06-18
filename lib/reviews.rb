@@ -8,9 +8,5 @@ class Review < ActiveRecord::Base
         "Rating: #{self.rating}",
         "User: #{self.user.name.capitalize}"]
     end
-
-
-
-
-
+    
 end
