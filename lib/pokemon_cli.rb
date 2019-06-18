@@ -1,3 +1,15 @@
+prompt = TTY::Prompt.new
+
+
+
+result = prompt.collect do
+    key(:name).ask('Welcome to the Pokemon World! What is your name?')
+    key(:age).ask('This is great! What is your age?') {|a| a.validate /[0-9]/}
+end
+
+
+
+
 def your_data
 
     puts "Welcome to the Pokemon World! What is your name?"
@@ -19,5 +31,7 @@ def your_data
         puts "Your #{po_poke} needs to go to the Pokemon Center to heal up!"
     else puts "Pick the following options: "
     end
+
+    binding.pry
 
 end

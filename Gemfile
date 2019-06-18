@@ -6,3 +6,4 @@ gem 'require_all'
 gem "sinatra-activerecord"
 gem "sqlite3"
 gem "pry"
+gem 'tty-prompt'

@@ -9,4 +9,9 @@ class User < ActiveRecord::Base
         player.hp += rand(5..20)
         player.save
     end
+
+    def add_review(content:, center_id:, rating:)
+        binding.pry
+        Review.create(user_id: self.id, content: content, center_id: center_id, rating: rating.clamp(1, 5))
+    end
 end
