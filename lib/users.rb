@@ -1,3 +1,9 @@
+class User < ActiveRecord::Base
+    has_many :reviews
+    has_many :centers, through: :reviews
+    has_one :pokemon
+end
+
 def get_name
     user_name = gets.chomp
     while user_name.empty?
@@ -21,8 +27,3 @@ def random_pokemon
     pokemon = pokemons.results.sample
 end
 
-class User < ActiveRecord::Base
-    has_many :reviews
-    has_many :centers, through: :reviews
-    has_one :pokemon
-end
