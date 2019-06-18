@@ -4,6 +4,7 @@ require 'poke-api-v2'
 require 'bundler'
 require 'rake'
 require 'active_record'
+require 'tty-prompt'
 
 require_all 'lib'
 
