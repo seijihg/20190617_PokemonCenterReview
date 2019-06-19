@@ -24,6 +24,7 @@ class User < ActiveRecord::Base
     def check_hp
         if pokemon_hp < 1
             puts "Your Pokemon has died, MURDERER!"
+            play_scream
             sleep 3
             visit_center
         elsif pokemon_hp < 50

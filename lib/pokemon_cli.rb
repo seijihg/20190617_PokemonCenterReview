@@ -1,8 +1,29 @@
 $prompt = TTY::Prompt.new
 $cliuser = nil
 
+def systemclear(pagetitle)
+  system "clear"
+  puts Rainbow("                                .::.").red
+  puts Rainbow("                              .;:**'").red
+  puts Rainbow("                              `").red
+  puts Rainbow("  .:XHHHHk.              db.   .;;.     dH  MX").red
+  puts Rainbow("oMMMMMMMMMMM       ~MM  dMMP :MMMMMR   MMM  MR      ~MRMN").red
+  puts Rainbow("QMMMMMb  'MMX       MMMMMMP !MX' :M~   MMM MMM  .oo. XMMM 'MMM").red
+  puts Rainbow("  `MMMM.  )M> :X!Hk. MMMM   XMM.o'  .  MMMMMMM X?XMMM MMM>!MMP").red
+  puts Rainbow("   'MMMb.dM! XM M'?M MMMMMX.`MMMMMMMM~ MM MMM XM `' MX MMXXMM").red
+  puts Rainbow("    ~MMMMM~ XMM. .XM XM`'MMMb.~*?**~ .MMX M t MMbooMM XMMMMMP").white
+  puts Rainbow("     ?MMM>  YMMMMMM! MM   `?MMRb.    `'''   !L'MMMMM XM IMMM").white
+  puts Rainbow("      MMMX   'MMMM'  MM       ~%:           !Mh.''' dMI IMMP").white
+  puts Rainbow("      'MMM.                                             IMX").white
+  puts Rainbow("       ~M!M            'Gotta heal'em all'              IMP").white
+  puts Rainbow(" ============================================================").white
+  puts Rainbow(" #{pagetitle} ").white.center(72)
+  puts Rainbow(" ============================================================").white
+  puts "\n\n"
+end
+
 def welcome
-    puts "Welcome to the Pokecenter Review app"
+    systemclear("Welcome to our Pokemon Center Review app")
 
     option = $prompt.select('Login or Register', ['Login', 'Register', 'Exit'])
         if option == "Login"
@@ -51,10 +72,13 @@ def welcome
                             add_pokemon_to_user
                             $cliuser.check_hp
         else option == 'Exit'
+            system("killall afplay")
             exit
         end
 
 end
+
+
 
 
 def add_pokemon_to_user
@@ -81,6 +105,7 @@ def add_pokemon_to_user
 end
 
 def main_menu
+    systemclear("MAIN MENU")
     Pokemon.losing_hp
     option = $prompt.select('Main Menu', ['Visit Pokemon Center', 'See all Reviews', 'Pokemon Center Ranking', 'Log out'])
         if option == 'Visit Pokemon Center'
@@ -104,6 +129,7 @@ def visit_center
 end
 
 def see_all_reviews
+    systemclear("ALL REVIEWS")
     Review.all.map {|rev| rev.show_review}.each {|r| puts r}
     $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
     Pokemon.losing_hp
@@ -112,6 +138,7 @@ def see_all_reviews
 end
 
 def pokecenter_rank
+    systemclear("RANKINGS")
     rank = Center.all.sort_by {|center| center.average_ratings}.reverse
     rank.map {|center| center.show_ranking}.each {|r| puts r}
     $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
@@ -121,6 +148,8 @@ def pokecenter_rank
 end
 
 def pokecenter_menu
+    systemclear("Welcome to #{$selected_center.center} Pokemon Center")
+    play_pokecenter_music
     pc_menu = $prompt.select("Welcome to the #{$selected_center.center} Pokemon Center Menu", ['Heal Pokemon', 'See Center Reviews', 'Edit Review', 'Delete Review', 'Leave Center'])
         if pc_menu == 'Heal Pokemon'
             sleep 1
@@ -140,25 +169,31 @@ def pokecenter_menu
             sleep 1
         else pc_menu == 'Leave Center'
             Pokemon.losing_hp
+            play_opening_music
             main_menu
         end
 end
 
 def collect_for_review
     $prompt.collect do
-        key(:content).ask('How was the experience you had with us?')
-        key(:rating).ask("How do you score us between 1 and 5?", validate: /1-5/)
+        key(:content).ask('How was the experience you had with us?') do |re|
+            re.validate(/\d/, "Please enter a review")
+        end
+        key(:rating).ask("How do you score us between 1 and 5?") do |ra|
+            ra.validate(/[1-5]/, "Please enter a rating between 1-5")
+        end
     end
 end
 
 def center_reviews
+    systemclear("#{$selected_center.center} Pokemon Center Reviews")
     center_revs = Review.all.select {|review| review.center == $selected_center}
     center_review = center_revs.map {|rev| rev.show_review}
     if center_review.empty?
         puts "There are no reviews yet for this Center"
     else 
         puts center_review
-        puts $selected_center.average_rating
+        puts "Average Rating: #{$selected_center.average_rating}"
     end
     $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
     pokecenter_menu
@@ -166,13 +201,19 @@ end
 
 def select_review
     rev_user = Review.all.select {|rev| rev.user == $cliuser && rev.center == $selected_center}
+    if rev_user.empty?
+        puts "You have not reviewed this Center yet"
+        $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
+        pokecenter_menu
+    else 
     review_list = rev_user.map {|rev| rev.content}
     review = $prompt.select('Please select a Review', [review_list])
-    binding.pry
     $selected_review = Review.all.find_by(content: review)
+    end
 end
 
 def edit_review
+    systemclear("Edit your #{$selected_center.center} Reviews")
     select_review
     edit = $prompt.select("Edit #{$selected_review.content}?", ["Yes", "No"])
         if edit == "Yes"
@@ -180,7 +221,7 @@ def edit_review
             $selected_review.content = gets.chomp
             $selected_review.save
             puts "Please give a new rating"
-            $selected_review.rating = gets.chomp
+            $selected_review.rating = check
             $selected_review.save
             $prompt.ok("Done.")
             Pokemon.losing_hp
@@ -192,12 +233,16 @@ def edit_review
 end
 
 def delete_review
+    systemclear("Delete your #{$selected_center.center} Reviews")
     select_review
-    delete = $prompt.select("Delete #{$selected_review}?", ["Yes", "No"])
+    delete = $prompt.select("Delete #{$selected_review.content}?", ["Yes", "No"])
         if delete == "Yes"
             Review.all.where(id: $selected_review.id).destroy_all
             $selected_review = ''
             $prompt.ok("Done.")
+            play_delete
+            sleep 3
+            play_pokecenter_music
             Pokemon.losing_hp
             pokecenter_menu
         else delete == "No"
