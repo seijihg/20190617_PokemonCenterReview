@@ -8,7 +8,8 @@ class Center < ActiveRecord::Base
     end
 
     def average_rating
-        reviews.sum {|rev| rev.rating} / reviews.count.to_f
+        avg = reviews.sum {|rev| rev.rating} / reviews.count.to_f
+        avg.round(1)
     end
 
     def average_ratings

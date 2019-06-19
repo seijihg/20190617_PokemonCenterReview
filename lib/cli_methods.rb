@@ -7,13 +7,13 @@ def get_name
     user_name.downcase
 end
 
-def get_age
-    user_age = gets.chomp
-    while user_age.empty? || user_age.to_i == 0
-        puts "Your age please and in a number?"
-        user_age = gets.chomp
+def check
+    user = gets.chomp
+    while user.empty? || user.to_i == 0
+        puts "Your rating please and in a number?"
+        user = gets.chomp
     end
-    user_age.to_i.clamp(10, 99)
+    user.to_i.clamp(1, 5)
 end
 
 def random_pokemon
@@ -51,3 +51,4 @@ end
 def center_with_reviews
     Center.all.select {|center| !center.reviews.empty?}
 end
+
