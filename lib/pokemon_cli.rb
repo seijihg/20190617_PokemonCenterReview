@@ -3,6 +3,7 @@ $cliuser = nil
 
 def systemclear(pagetitle)
   system "clear"
+  puts "\n\n"
   puts Rainbow("                                .::.").red
   puts Rainbow("                              .;:**'").red
   puts Rainbow("                              `").red
@@ -177,7 +178,7 @@ end
 def collect_for_review
     $prompt.collect do
         key(:content).ask('How was the experience you had with us?') do |re|
-            re.validate(/\d/, "Please enter a review")
+            re.validate(/./, "Please enter a review")
         end
         key(:rating).ask("How do you score us between 1 and 5?") do |ra|
             ra.validate(/[1-5]/, "Please enter a rating between 1-5")
