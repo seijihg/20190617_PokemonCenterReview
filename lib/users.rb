@@ -3,16 +3,26 @@ class User < ActiveRecord::Base
     has_many :centers, through: :reviews
     has_one :pokemon
 
-    def heal_pokemon(center_id)
-        center = Center.all.select {|c| c.id == center_id}
+    def heal_helper(value)
         poke = Pokemon.find_by(name: self.pokemon.name)
         origin_hp = poke.hp
-        after_hp = (poke.hp += rand(5..20)).clamp(0, 100)
+        after_hp = (poke.hp += value).clamp(0, 100)
         amount = after_hp - origin_hp
         self.pokemon.hp = after_hp
         sleep 1
-        puts "Great your #{poke.name} has healed by #{amount}"
+        puts "Great your #{poke.name} has healed by #{amount}."
         poke.save
+    end
+
+    def heal_pokemon(center_id)
+        center = Center.all.select {|c| c.id == center_id}
+        poke = Pokemon.find_by(name: self.pokemon.name)
+        if poke.pokemon_type == center.last.center_type
+            puts Rainbow("Our speciality is #{center.last.center_type} and your pokemon is the same type! We shall heal you double the normal amount!!").red.blink
+            heal_helper(rand(20..40))
+        else
+            heal_helper(rand(5..20))
+        end
         $cliuser.show_hp
     end
 
@@ -28,7 +38,7 @@ class User < ActiveRecord::Base
             sleep 3
             visit_center
         elsif pokemon_hp < 50
-            puts "Your Pokemon HP is #{pokemon_hp}! Go to Pokemon Center straight away!"
+            puts "Your #{self.pokemon.name.capitalize} HP is #{pokemon_hp}! Go to Pokemon Center straight away!"
         else
             puts "Your #{self.pokemon.name.capitalize} has #{pokemon_hp} HP and is healthy!"
         end

@@ -109,7 +109,7 @@ def main_menu
     systemclear("MAIN MENU")
     Pokemon.losing_hp
     $cliuser.check_hp
-    option = $prompt.select('Main Menu', ['Visit Pokemon Center', 'See all Reviews', 'Pokemon Center Ranking', 'Log out'])
+    option = $prompt.select('Main Menu', ['Visit Pokemon Center', 'See all Reviews', 'Pokemon Center Ranking', 'Look for More Pokemon Centers!', 'Log out'])
         if option == 'Visit Pokemon Center'
             visit_center
         elsif option == 'See all Reviews'
@@ -118,6 +118,24 @@ def main_menu
         elsif option == 'Pokemon Center Ranking'
             pokecenter_rank
             sleep 1
+        elsif option == 'Look for More Pokemon Centers!'
+            puts "#{$cliuser.name.capitalize} travel far beyond the existing border to find more Centers!"
+            sleep 2
+            puts Rainbow("...").blink
+            sleep 1
+            new_center = add_centers_to_db
+            if new_center.empty?
+                puts "No Luck finding anything"
+                sleep 2
+                main_menu
+            else 
+                puts "Great we found #{new_center.size} new centers:"
+                sleep 1
+                new_center.each {|c| puts c}
+                sleep 2
+                main_menu
+            end
+
         else option == 'Log out'
             welcome
         end
@@ -143,7 +161,7 @@ def pokecenter_rank
     systemclear("RANKINGS")
     Pokemon.losing_hp
     $cliuser.check_hp
-    rank = Center.all.sort_by {|center| center.average_ratings}.reverse
+    rank = Center.average_ratings.reverse
     rank.map {|center| center.show_ranking}.each {|r| puts r}
     $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
     main_menu
