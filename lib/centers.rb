@@ -12,8 +12,9 @@ class Center < ActiveRecord::Base
         avg.round(1)
     end
 
-    def average_ratings
-        Center.all.sort_by {|center| center.average_rating}
+    def self.average_ratings
+        centers_with_review = Center.all.select {|rev| !rev.reviews.empty?}
+        centers_with_review.sort_by {|center| center.average_rating}
     end
 
     def show_ranking
