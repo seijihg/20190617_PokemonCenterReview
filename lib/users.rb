@@ -7,12 +7,13 @@ class User < ActiveRecord::Base
         center = Center.all.select {|c| c.id == center_id}
         poke = Pokemon.find_by(name: self.pokemon.name)
         origin_hp = poke.hp
-        after_hp = (poke.hp += rand(5..20)).clamp(1, 100)
+        after_hp = (poke.hp += rand(5..20)).clamp(0, 100)
         amount = after_hp - origin_hp
         self.pokemon.hp = after_hp
         sleep 1
         puts "Great your #{poke.name} has healed by #{amount}"
         poke.save
+        $cliuser.show_hp
     end
 
     def pokemon_hp
@@ -21,14 +22,19 @@ class User < ActiveRecord::Base
     end
 
     def check_hp
-        if pokemon_hp < 50
-            puts "Your Pokemon HP is #{pokemon_hp}! Go to Pokemon Center straight away!"
-        elsif pokemon_hp == 0
+        if pokemon_hp < 1
             puts "Your Pokemon has died, MURDERER!"
             sleep 3
-            exit
-        else puts "Your #{self.pokemon.name.capitalize} has #{pokemon_hp} HP and is healthy!"
+            visit_center
+        elsif pokemon_hp < 50
+            puts "Your Pokemon HP is #{pokemon_hp}! Go to Pokemon Center straight away!"
+        else
+            puts "Your #{self.pokemon.name.capitalize} has #{pokemon_hp} HP and is healthy!"
         end
+    end
+
+    def show_hp
+        puts "Your Pokemon HP is now #{pokemon_hp}."
     end
 
     def add_review(content:, center_id:, rating:)

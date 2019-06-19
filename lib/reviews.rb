@@ -9,4 +9,7 @@ class Review < ActiveRecord::Base
         "User: #{self.user.name.capitalize}"]
     end
     
+    def show_selected_review
+        ["Review: #{self.content}, Rating: #{self.rating}, id: #{self.id}"]
+    end
 end

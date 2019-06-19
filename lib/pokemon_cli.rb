@@ -97,8 +97,6 @@ def main_menu
 end
 
 def visit_center
-    Pokemon.losing_hp
-    $cliuser.check_hp
     center_list = (Center.all.map {|pc| pc.center})
     pokecenter = $prompt.select("Which Pokemon Center do you want to visit?", center_list, per_page: 20)
     $selected_center = Center.all.find_by(center: pokecenter)
@@ -114,7 +112,7 @@ def see_all_reviews
 end
 
 def pokecenter_rank
-    rank = Center.all.sort_by {|center| -center.average_ratings}
+    rank = Center.all.sort_by {|center| center.average_ratings}.reverse
     rank.map {|center| center.show_ranking}.each {|r| puts r}
     $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
     Pokemon.losing_hp
@@ -123,21 +121,21 @@ def pokecenter_rank
 end
 
 def pokecenter_menu
-    $cliuser.check_hp
-    pc_menu = $prompt.select("Welcome to the #{$selected_center.center} Pokemon Center Menu", ['Heal Pokemon', 'See Center Reviews', 'Edit Reviews', 'Delete Review', 'Leave Center'])
+    pc_menu = $prompt.select("Welcome to the #{$selected_center.center} Pokemon Center Menu", ['Heal Pokemon', 'See Center Reviews', 'Edit Review', 'Delete Review', 'Leave Center'])
         if pc_menu == 'Heal Pokemon'
             sleep 1
             $cliuser.heal_pokemon($selected_center.id)
             user_hash = collect_for_review
             $cliuser.add_review(content: user_hash[:content], rating: user_hash[:rating].to_i, center_id: $selected_center.id)
+            $cliuser.check_hp
             pokecenter_menu
         elsif pc_menu == 'See Center Reviews'
             center_reviews
             sleep 1
-        elsif pc_menu == 'Edit a Review'
+        elsif pc_menu == 'Edit Review'
             edit_review
             sleep 1
-        elsif pc_menu == 'Delete a Review'
+        elsif pc_menu == 'Delete Review'
             delete_review
             sleep 1
         else pc_menu == 'Leave Center'
@@ -153,15 +151,30 @@ def collect_for_review
     end
 end
 
+def center_reviews
+    center_revs = Review.all.select {|review| review.center == $selected_center}
+    center_review = center_revs.map {|rev| rev.show_review}
+    if center_review.empty?
+        puts "There are no reviews yet for this Center"
+    else 
+        puts center_review
+        puts $selected_center.average_rating
+    end
+    $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
+    pokecenter_menu
+end
+
 def select_review
-    review_list = user_reviews.map {|rev| rev.center == $selected_center}
+    rev_user = Review.all.select {|rev| rev.user == $cliuser && rev.center == $selected_center}
+    review_list = rev_user.map {|rev| rev.content}
     review = $prompt.select('Please select a Review', [review_list])
-    $selected_review = Review.all.find_by(id: review.id)
+    binding.pry
+    $selected_review = Review.all.find_by(content: review)
 end
 
 def edit_review
     select_review
-    edit = $prompt.select("Edit #{$selected_review}?", ["Yes", "No"])
+    edit = $prompt.select("Edit #{$selected_review.content}?", ["Yes", "No"])
         if edit == "Yes"
             puts "Please write a new review"
             $selected_review.content = gets.chomp

@@ -4,7 +4,7 @@ class Pokemon < ActiveRecord::Base
     def self.losing_hp
         Pokemon.all.each do |pokemon|
             random = pokemon.hp - rand(1..5)
-            pokemon.update(hp: random.clamp(1, 100))
+            pokemon.update(hp: random.clamp(0, 100))
         end
     end
 end
