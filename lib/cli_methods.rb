@@ -51,10 +51,3 @@ end
 def center_with_reviews
     Center.all.select {|center| !center.reviews.empty?}
 end
-
-def center_reviews
-    center_revs = Review.all.select {|review| review.center == selected_center}
-    if center_revs.empty?
-        puts "There are no reviews yet for this Center"
-    end
-end
