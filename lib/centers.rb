@@ -17,7 +17,7 @@ class Center < ActiveRecord::Base
     end
 
     def show_ranking
-        [Ranibow("Center: #{self.center}").red,
+        [Rainbow("Center: #{self.center}").red,
         Rainbow("Center Type: #{self.center_type.capitalize}").white,
         Rainbow("Average Rating: #{self.average_rating}").blue]
     end

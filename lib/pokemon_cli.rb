@@ -4,9 +4,9 @@ $cliuser = nil
 def systemclear(pagetitle)
   system "clear"
   puts "\n\n"
-  puts Rainbow("                                .::.").red
-  puts Rainbow("                              .;:**'").red
-  puts Rainbow("                              `").red
+  puts Rainbow("                                .::.").red.blink
+  puts Rainbow("                              .;:**'").red.blink
+  puts Rainbow("                              `").red.blink
   puts Rainbow("  .:XHHHHk.              db.   .;;.     dH  MX").red
   puts Rainbow("oMMMMMMMMMMM       ~MM  dMMP :MMMMMR   MMM  MR      ~MRMN").red
   puts Rainbow("QMMMMMb  'MMX       MMMMMMP !MX' :M~   MMM MMM  .oo. XMMM 'MMM").red
@@ -108,6 +108,7 @@ end
 def main_menu
     systemclear("MAIN MENU")
     Pokemon.losing_hp
+    $cliuser.check_hp
     option = $prompt.select('Main Menu', ['Visit Pokemon Center', 'See all Reviews', 'Pokemon Center Ranking', 'Log out'])
         if option == 'Visit Pokemon Center'
             visit_center
@@ -131,26 +132,27 @@ end
 
 def see_all_reviews
     systemclear("ALL REVIEWS")
-    Review.all.map {|rev| rev.show_review}.each {|r| puts r}
-    $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
     Pokemon.losing_hp
     $cliuser.check_hp
+    Review.all.map {|rev| rev.show_review}.each {|r| puts r}
+    $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
     main_menu
 end
 
 def pokecenter_rank
     systemclear("RANKINGS")
+    Pokemon.losing_hp
+    $cliuser.check_hp
     rank = Center.all.sort_by {|center| center.average_ratings}.reverse
     rank.map {|center| center.show_ranking}.each {|r| puts r}
     $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
-    Pokemon.losing_hp
-    $cliuser.check_hp
     main_menu
 end
 
 def pokecenter_menu
     systemclear("Welcome to #{$selected_center.center} Pokemon Center")
     play_pokecenter_music
+    
     pc_menu = $prompt.select("Welcome to the #{$selected_center.center} Pokemon Center Menu", ['Heal Pokemon', 'See Center Reviews', 'Edit Review', 'Delete Review', 'Leave Center'])
         if pc_menu == 'Heal Pokemon'
             sleep 1
@@ -169,7 +171,6 @@ def pokecenter_menu
             delete_review
             sleep 1
         else pc_menu == 'Leave Center'
-            Pokemon.losing_hp
             play_opening_music
             main_menu
         end
@@ -188,6 +189,8 @@ end
 
 def center_reviews
     systemclear("#{$selected_center.center} Pokemon Center Reviews")
+    Pokemon.losing_hp
+    $cliuser.check_hp
     center_revs = Review.all.select {|review| review.center == $selected_center}
     center_review = center_revs.map {|rev| rev.show_review}
     if center_review.empty?
@@ -202,6 +205,8 @@ end
 
 def select_review
     rev_user = Review.all.select {|rev| rev.user == $cliuser && rev.center == $selected_center}
+    Pokemon.losing_hp
+    $cliuser.check_hp
     if rev_user.empty?
         puts "You have not reviewed this Center yet"
         $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
