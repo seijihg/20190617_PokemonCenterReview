@@ -15,7 +15,7 @@ def systemclear(pagetitle)
   puts Rainbow("     ?MMM>  YMMMMMM! MM   `?MMRb.    `'''   !L'MMMMM XM IMMM").white
   puts Rainbow("      MMMX   'MMMM'  MM       ~%:           !Mh.''' dMI IMMP").white
   puts Rainbow("      'MMM.                                             IMX").white
-  puts Rainbow("       ~M!M                                             IMP").white
+  puts Rainbow("       ~M!M            'Gotta heal'em all'              IMP").white
   puts Rainbow(" ============================================================").white
   puts Rainbow(" #{pagetitle} ").white.center(72)
   puts Rainbow(" ============================================================").white
@@ -176,8 +176,16 @@ end
 
 def collect_for_review
     $prompt.collect do
-        key(:content).ask('How was the experience you had with us?')
-        key(:rating).ask("How do you score us between 1 and 5?", validate: /1-5/)
+        key(:content).ask('How was the experience you had with us?') do |re|
+            # if key(:content) == nil
+            #     $prompt.error('Please enter a review')
+            #     collect_for_review
+            # end
+            re.validate(/\d/, "Please enter a review")
+        end
+        key(:rating).ask("How do you score us between 1 and 5?") do |ra|
+            ra.validate(/[1-5]/, "Please enter a rating between 1-5")
+        end
     end
 end
 
@@ -189,7 +197,7 @@ def center_reviews
         puts "There are no reviews yet for this Center"
     else 
         puts center_review
-        puts $selected_center.average_rating
+        puts "Average Rating: #{$selected_center.average_rating}"
     end
     $prompt.keypress("Press space or enter to go back", keys: [:space, :return])
     pokecenter_menu

@@ -3,10 +3,10 @@ class Review < ActiveRecord::Base
     belongs_to :center
 
     def show_review
-        ["Center: #{self.center.center}",
-        "Review: #{self.content}",
-        "Rating: #{self.rating}",
-        "User: #{self.user.name.capitalize}"]
+        [Rainbow("Center: #{self.center.center}").green,
+        Rainbow("Review: #{self.content}").yellow,
+        Rainbow("Rating: #{self.rating}").red,
+        Rainbow("User: #{self.user.name.capitalize}").blue]
     end
     
     def show_selected_review
