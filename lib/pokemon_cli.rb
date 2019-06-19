@@ -177,10 +177,6 @@ end
 def collect_for_review
     $prompt.collect do
         key(:content).ask('How was the experience you had with us?') do |re|
-            # if key(:content) == nil
-            #     $prompt.error('Please enter a review')
-            #     collect_for_review
-            # end
             re.validate(/\d/, "Please enter a review")
         end
         key(:rating).ask("How do you score us between 1 and 5?") do |ra|
