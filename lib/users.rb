@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
         center = Center.all.select {|c| c.id == center_id}
         poke = Pokemon.find_by(name: self.pokemon.name)
         origin_hp = poke.hp
-        after_hp = (poke.hp += rand(5..20)).clamp(0, 100)
+        after_hp = (poke.hp += rand(10..25)).clamp(0, 100)
         amount = after_hp - origin_hp
         self.pokemon.hp = after_hp
         sleep 1

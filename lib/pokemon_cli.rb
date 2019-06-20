@@ -4,9 +4,9 @@ $cliuser = nil
 def systemclear(pagetitle)
   system "clear"
   puts "\n\n"
-  puts Rainbow("                                .::.").red.blink
-  puts Rainbow("                              .;:**'").red.blink
-  puts Rainbow("                              `").red.blink
+  puts Rainbow("                                .::.").blink.red
+  puts Rainbow("                              .;:**'").blink.red
+  puts Rainbow("                              `").blink.red
   puts Rainbow("  .:XHHHHk.              db.   .;;.     dH  MX").red
   puts Rainbow("oMMMMMMMMMMM       ~MM  dMMP :MMMMMR   MMM  MR      ~MRMN").red
   puts Rainbow("QMMMMMb  'MMX       MMMMMMP !MX' :M~   MMM MMM  .oo. XMMM 'MMM").red
@@ -21,6 +21,14 @@ def systemclear(pagetitle)
   puts Rainbow(" #{pagetitle} ").white.center(72)
   puts Rainbow(" ============================================================").white
   puts "\n\n"
+
+#   Catpix::print_image "pokemon_logo.png",
+#   :limit_x => 1.0,
+#   :limit_y => 0,
+#   :center_x => true,
+#   :center_y => true,
+#   :resolution => "high"
+
 end
 
 def welcome
