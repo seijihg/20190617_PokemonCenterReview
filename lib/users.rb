@@ -33,19 +33,19 @@ class User < ActiveRecord::Base
 
     def check_hp
         if pokemon_hp < 1
-            puts "Your Pokemon has died, MURDERER!"
+            puts Rainbow("Your Pokemon has died, MURDERER!").red.blink
             play_scream
             sleep 3
             visit_center
         elsif pokemon_hp < 50
             puts "Your #{self.pokemon.name.capitalize} HP is #{pokemon_hp}! Go to Pokemon Center straight away!"
         else
-            puts "Your #{self.pokemon.name.capitalize} has #{pokemon_hp} HP and is healthy!"
+            puts Rainbow("Your #{self.pokemon.name.capitalize} has #{pokemon_hp} HP and is healthy!").green
         end
     end
 
     def show_hp
-        puts "Your Pokemon HP is now #{pokemon_hp}."
+        puts Rainbow("Your Pokemon HP is now #{pokemon_hp}.").cyan.blink
     end
 
     def add_review(content:, center_id:, rating:)
@@ -57,3 +57,6 @@ class User < ActiveRecord::Base
     end
 
 end
+
+
+
