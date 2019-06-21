@@ -1,4 +1,4 @@
-$prompt = TTY::Prompt.new
+$prompt = TTY::Prompt.new(active_color: :cyan)
 $cliuser = nil
 
 def systemclear(pagetitle)
@@ -36,7 +36,7 @@ def welcome
 
             if User.exists?(name: login[:name])
                 $cliuser = User.find_by(name: login[:name])
-                puts 'Success. Welcome'
+                puts "Welcome back #{$cliuser.name.capitalize}!"
                 sleep 1
                 $cliuser.check_hp
                 sleep 1
@@ -56,7 +56,8 @@ def welcome
                         end
 
                         if User.exists?(name: new_name[:name])
-                           $prompt.error('Name already taken, please select another')
+                            $prompt.error('Name already taken, please select another')
+                            sleep 2
                             welcome
                         elsif new_name[:name] == nil
                            $prompt.error('Please enter a valid username')
@@ -64,7 +65,7 @@ def welcome
                         else
                             new_age = $prompt.collect do
                                             key(:age).ask('What is your age?') do |an|
-                                                an.validate /[0-9]/
+                                                an.validate /^[0-9]+$/
                                             end
                                         end
                         end
@@ -80,11 +81,8 @@ def welcome
 end
 
 
-
-
 def add_pokemon_to_user
     $prompt.say('Lets pick a pokemon')
-    # pokemon_list = (Pokemon.all.map {|pokemon| pokemon.name.capitalize}).sample(3)
     poke_list = PokeApi.get(:pokemon).results.sample(3)
     pokemon_list = poke_list.map {|pokemon| pokemon.name.capitalize}
 
@@ -95,7 +93,7 @@ def add_pokemon_to_user
             Pokemon.create(name: pokemon.downcase, pokemon_type: find_out_type(pokemon.downcase), hp: random_hp)
             selected_pokemon = Pokemon.all.find_by(name: pokemon.downcase)
         end
-    add = $prompt.select("Add #{selected_pokemon.name.capitalize} to #{$cliuser.name}?", ['Yes', 'No'])
+    add = $prompt.select("Add #{selected_pokemon.name.capitalize} to #{$cliuser.name.capitalize}?", ['Yes', 'No'])
         if add == 'Yes'
             $cliuser.pokemon = selected_pokemon
             $prompt.ok("Congratulations, here’s your #{selected_pokemon.name.capitalize}, #{selected_pokemon.hp} HP.")
@@ -169,6 +167,7 @@ end
 
 def pokecenter_menu
     systemclear("Welcome to #{$selected_center.center} Pokemon Center")
+    $cliuser.check_hp
     play_pokecenter_music
     
     pc_menu = $prompt.select("Welcome to the #{$selected_center.center} Pokemon Center Menu", ['Heal Pokemon', 'See Center Reviews', 'Edit Review', 'Delete Review', 'Leave Center'])
